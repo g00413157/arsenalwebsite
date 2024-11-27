@@ -7,27 +7,28 @@
 </head>
 <body>
 <?php
- $servername="arsenalwebsite";
+ $servername="localhost";
  $username = "root";
  $password = "";
- $db_name = "arsenalwebsite";
+ $db_name = "arsenalwebsitedb";
  //Create Connection
  $conn = mysqli_connect($servername,$username,$password,$db_name);
 
  $sql="CREATE TABLE players (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    profile_image  VARCHAR(20),
     name VARCHAR(255) NOT NULL,
     number INT NOT NULL,
     position VARCHAR(100) NOT NULL,
     nationality VARCHAR(100) NOT NULL,
-    flag_reference VARCHAR(20),
+    flag_image VARCHAR(20),
     date_of_birth DATE NOT NULL,
     date_joined DATE NOT NULL,
     description TEXT
 );"; 
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table pLAYERS created successfully";
+    echo "Table Players created successfully";
   } else {
     echo "Error creating table: " . $conn->error;
   }

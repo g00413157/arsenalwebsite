@@ -10,7 +10,7 @@
 $servername = "localhost"; // Correct hostname for local database
 $username = "root";
 $password = "";
-$db_name = "arsenalwebsite";
+$db_name = "arsenalwebsitedb";
 
 // Create Connection
 $conn = mysqli_connect($servername, $username, $password, $db_name);
