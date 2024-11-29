@@ -73,8 +73,9 @@
         <!-- Right navigation link -->
         <nav class="nav-links">
             <a href="createUser.php">Sign Up</a>
-            <a href="login.php">Sign In</a>
+            <a href="userForm.php">Sign In</a>
         </nav>
     </header>
+
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Matches</title>
 </head>
 <body>
 <?php
@@ -20,21 +20,17 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// SQL to create the matches table
-$sql = "CREATE TABLE merchandise (
+// SQL to create the users table
+$sql = "CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    merch_name VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    stock INT NOT NULL,
-    status VARCHAR(100) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) UNIQUE NOT NULL,
     created_at TIMESTAMP NOT NULL
-    
 );"; // Removed the trailing comma here
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Merchandise created successfully";
+    echo "User Table created successfully";
 } else {
     echo "Error creating table: " . $conn->error;
 }
