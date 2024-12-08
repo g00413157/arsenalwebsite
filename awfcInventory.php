@@ -46,6 +46,10 @@
             /* Adjust logo size */
 
         }
+
+        #buttons {
+            color: #EF0107;
+        }
     </style>
 
 </head>

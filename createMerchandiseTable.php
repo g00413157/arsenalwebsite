@@ -28,7 +28,7 @@ $sql = "CREATE TABLE merchandise (
     price DECIMAL(10,2) NOT NULL,
     stock INT NOT NULL,
     status VARCHAR(100) NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
+    image_url VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL
     
 );"; // Removed the trailing comma here

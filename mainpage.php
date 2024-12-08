@@ -60,7 +60,7 @@
         <nav class="nav-links">
             <a href="showplayers.php">Players</a>
             <a href="showmatches.php">Matches</a>
-            <a href="showmerchandise.php">Merchandise</a>
+            <a href="awfcInventory.php">Merchandise</a>
         </nav>
 
         <!-- Centered logo -->
