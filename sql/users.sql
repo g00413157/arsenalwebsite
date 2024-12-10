@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 08, 2024 at 01:51 PM
+-- Generation Time: Dec 10, 2024 at 11:39 PM
 -- Server version: 8.3.0
 -- PHP Version: 8.2.18
 
@@ -33,12 +33,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `created_at` TIMESTAMP NOT NULL,
+  `created_at` timestamp NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `password` (`password`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
@@ -58,7 +58,9 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
 (12, 'lucaswhite', 'lucas.white22@gmail.com', 'lw20', '2024-12-08 13:50:36'),
 (13, 'izzyl', 'isabella.lee18@gmail.com', 'il20', '2024-12-08 13:51:04'),
 (14, 'jacksonC', 'jackson.clark19@outlook.com', 'jc19', '0000-00-00 00:00:00'),
-(15, 'sophia.harris21', 'sophia.harris21@yahoo.com', 'sh21', '0000-00-00 00:00:00');
+(15, 'sophia.harris21', 'sophia.harris21@yahoo.com', 'sh21', '0000-00-00 00:00:00'),
+(18, 'ellenhiggins6', 'qwerty@asdfg.com', 'wsdfghj', '0000-00-00 00:00:00'),
+(17, 'monsterm', 'monsterm@gmail.com', '345674', '0000-00-00 00:00:00');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
