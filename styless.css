@@ -135,3 +135,48 @@ p {
     text-align: center;
     font-size: 18px;
 }
+#about-us {
+    padding: 2em;
+    background-color: #fff;
+}
+
+#about-us .container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#about-us h1 {
+    color: #fff;
+    text-align: center;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.first {
+    background-image: linear-gradient(to right, #a0f1eb ,#ca94ff);
+    color: white;  /* Text color */
+    padding: 10px; /* Padding around the text */
+    margin: 10px 0; /* Margin above and below the heading */
+    border-radius: 5px; /* Optional: rounded corners */
+}
+
+/* Styling for regular h2 headings */
+h2 {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+    color: #333;
+    margin: 20px 0;
+}
+#titles{
+    background-image:linear-gradient(to right, #a0f1eb ,#ca94ff); 
+    padding: 20px;
+    border-radius: 5px; 
+    text-align: center;
+}
