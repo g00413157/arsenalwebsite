@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Document</title>
-</head>
-<body>
-<?php
-$servername = "localhost"; // Use "localhost" if it's running locally
-$username = "root";
-$password = "";
-$db_name = "arsenalwebsitedb";
+-- Create the database (if not already created)
+CREATE DATABASE IF NOT EXISTS arsenalwebsitedb;
+USE arsenalwebsitedb;
 
-// Create Connection
-$conn = mysqli_connect($servername, $username, $password, $db_name);
+-- Create the players table
+CREATE TABLE IF NOT EXISTS players (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    profile_image VARCHAR(20),
+    name VARCHAR(255) NOT NULL,
+    number INT NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    nationality VARCHAR(100) NOT NULL,
+    flag_image VARCHAR(20),
+    date_of_birth DATE NOT NULL,
+    date_joined DATE NOT NULL,
+    description TEXT
+);
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$sql = "INSERT INTO players (profile_image, name, number, position, nationality, flag_image, date_of_birth, date_joined, description) VALUES
+-- Insert data into the players table
+INSERT INTO players (profile_image, name, number, position, nationality, flag_image, date_of_birth, date_joined, description) VALUES
 ('players/mz.png', 'Manuela Zinsberger', 1, 'Goalkeeper', 'Austrian', 'flags/aus.png', '1995-10-19', '2019-07-01', 'A commanding goalkeeper known for her shot-stopping and composure.'),
 ('players/dvd.png', 'Daphne Van Domselaar', 14, 'Goalkeeper', 'Dutch', 'flags/ned.png', '2000-03-06', '2024-07-31', 'A talented Dutch goalkeeper renowned for her quick reflexes, commanding presence, and impressive performances on the international stage.'),
 ('players/lw3.png', 'Laura Wienroither', 26, 'Defender', 'Austrian', 'flags/aus.png', '1999-01-13', '2022-01-20', 'A talented full-back who provides defensive stability and attacking runs.'),
@@ -38,16 +37,4 @@ $sql = "INSERT INTO players (profile_image, name, number, position, nationality,
 ('players/kcc.png', 'Kyra Cooney-Cross', 32, 'Midfielder', 'Australian', 'flags/oz.png', '2003-07-05', '2023-09-15', 'A dynamic Australian midfielder recognized for her playmaking skills, athleticism, and ability to dictate the flow of the game.'),
 ('players/bm.png', 'Beth Mead', 9, 'Forward', 'English', 'flags/eng.png', '1995-05-09', '2017-01-01', 'A prolific winger with a knack for scoring and creating key chances.'),
 ('players/ar.png', 'Alessia Russo', 23, 'Forward', 'English', 'flags/eng.png', '1999-02-08', '2023-07-01', 'A rising star and versatile forward with excellent technical skills.'),
-('players/cf.png', 'Caitlin Foord', 19, 'Forward', 'Australian', 'flags/oz.png', '1994-11-11', '2020-01-24', 'A dynamic winger/forward with exceptional dribbling and goal-scoring ability.');";
-
-
-if (mysqli_query($conn, $sql)) {
-    echo "Players added successfully";
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
-
-mysqli_close($conn);
-?>
-</body>
-</html>
+('players/cf.png', 'Caitlin Foord', 19, 'Forward', 'Australian', 'flags/oz.png', '1994-11-11', '2020-01-24', 'A dynamic winger/forward with exceptional dribbling and goal-scoring ability.');

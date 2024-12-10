@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Matches</title>
 </head>
 <body>
 <?php
@@ -21,20 +21,23 @@ if (!$conn) {
 }
 
 // SQL to create the matches table
-$sql = "CREATE TABLE merchandise (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    merch_name VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    stock INT NOT NULL,
-    status VARCHAR(100) NOT NULL,
-    image_url VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP NOT NULL
-    
+$sql = "CREATE TABLE matches (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL,
+    badge_url VARCHAR(20) NOT NULL,
+    opponent VARCHAR(100) NOT NULL,
+    stadium VARCHAR(100) NOT NULL,
+    home_away ENUM('Home','Away','Neutral') NOT NULL,
+    score VARCHAR(20) NOT NULL,
+    arsenalb_url VARCHAR(20) NOT NULL,
+    arsenal VARCHAR(20) NOT NULL,
+    comp_url VARCHAR(20) NOT NULL,
+    competition VARCHAR(100) NOT NULL,
+    season VARCHAR(20) NOT NULL
 );"; // Removed the trailing comma here
 
 if ($conn->query($sql) === TRUE) {
-    echo "Table Merchandise created successfully";
+    echo "Table Matches created successfully";
 } else {
     echo "Error creating table: " . $conn->error;
 }

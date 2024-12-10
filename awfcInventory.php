@@ -2,65 +2,20 @@
 <html lang="en">
 
 <head>
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-image: linear-gradient(to right, #a0f1eb, #ca94ff);
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .header .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .header a {
-            text-decoration: none;
-            color: #ffffff;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        .header a:hover {
-            color: #007BFF;
-        }
-
-        .logo {
-            position: center;
-            align-items: center;
-
-        }
-
-        .logo img {
-            height: 100px;
-            /* Adjust logo size */
-
-        }
-
-        #buttons {
-            color: #EF0107;
-        }
-    </style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="crest.png">
+    <title>Merchandise Shop</title>
+    <link rel="stylesheet" href="styless.css"> <!-- Ensure the CSS file path is correct -->
 </head>
 
 <body>
     <header class="header">
         <!-- Left navigation links -->
         <nav class="nav-links">
-            <a href="showplayers.php">Players</a>
-            <a href="showmatches.php">Matches</a>
-            <a href="showmerchandise.php">Merchandise</a>
+            <a id="plyrs" href="showplayers.php">Players</a>
+            <a id="matchs" href="showmatches.php">Matches</a>
+            <a id="merch" href="awfcInventory.php">Merchandise</a>
         </nav>
 
         <!-- Centered logo -->
@@ -70,56 +25,184 @@
             </a>
         </div>
 
-        <!-- Right navigation link -->
+        <!-- Right navigation links -->
         <nav class="nav-links">
-            <a href="createUser.php">Sign Up</a>
-            <a href="userForm.php">Sign In</a>
+            <a id="up" href="createUser.php">Sign Up</a>
+            <a id="in" href="userForm.php">Log In</a>
         </nav>
     </header>
 
-    <?php
-    $conn = new mysqli("localhost", "root", "", "arsenalwebsitedb");
-    if ($conn->connect_error) {
-        die("Connection Failed: " . $conn->connect_error);
-    }
+    <main>
+        <center>
+            <h1>Merchandise Shop</h1>
+        </center>
 
-    $sql = "SELECT DISTINCT merch_name FROM merchandise ORDER BY merch_name ";
-    $result = $conn->query($sql);
-    $conn->close();
-    ?>
-    <center>Show Items</center>
-    <div>
-        <select name="status" id="status" onchange="updateAWFCStatus()">
-            <option value="" disabled selected>Select a Status</option>
-            <option value="">All</option>
-            <option value="available">Available</option>
-            <option value="out_of_stock">Out of Stock</option>
-            <option value="limited_stock">Limited Edition</option>
-        </select>
-        <select name="merch_name" id="merch_name" onchange="updateAWFCStatus()">
-            <option value="" disabled selected>Select a Name</option>
-            <option value="">All</option>
-            <?php while ($row = $result->fetch_assoc()) {
-                echo "<option value=\"" . $row["merch_name"] . "\">" . $row["merch_name"] . "</option>";
-            }
-            ?>
-        </select>
-    </div>
-    <div id="merch_response"></div>
+        <!-- Filters for merchandise -->
+        <div>
+            <form id="awfc_form">
+                <!-- Merchandise Name Dropdown -->
+                <label for="merch_name"><b>Merchandise Name:</b></label>
+                <select name="merch_name" id="merch_name" onchange="updateAWFCStatus()">
+                    <option value="" disabled selected>Select a Name</option>
+                    <option value="">All</option>
+                    <?php
+                    // Database connection
+                    $conn = new mysqli("localhost", "root", "", "arsenalwebsitedb");
+                    if ($conn->connect_error) {
+                        die("Connection Failed: " . $conn->connect_error);
+                    }
+
+                    // Fetch merchandise names
+                    $result = $conn->query("SELECT DISTINCT merch_name FROM merchandise ORDER BY merch_name");
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value=\"" . htmlspecialchars($row["merch_name"]) . "\">" . htmlspecialchars($row["merch_name"]) . "</option>";
+                        }
+                    }
+
+                    $conn->close(); // Close connection after fetching merchandise names
+                    ?>
+                </select>
+
+                <!-- Status Checkboxes -->
+                <div class="inline-form">
+                    <b>Select Status:</b><br>
+                    <?php
+                    // Reconnect to the database to fetch statuses
+                    $conn = new mysqli("localhost", "root", "", "arsenalwebsitedb");
+                    if ($conn->connect_error) {
+                        die("Connection Failed: " . $conn->connect_error);
+                    }
+
+                    // Fetch statuses
+                    $result2 = $conn->query("SELECT DISTINCT status FROM merchandise ORDER BY status");
+                    if ($result2 && $result2->num_rows > 0) {
+                        while ($row = $result2->fetch_assoc()) {
+                            echo "<label>";
+                            echo "<input type=\"checkbox\" name=\"status[]\" value=\"" . htmlspecialchars($row["status"]) . "\" onclick=\"updateAWFCStatus()\">" . htmlspecialchars($row["status"]);
+                            echo "</label><br>";
+                        }
+                    }
+
+                    $conn->close(); // Close connection after fetching statuses
+                    ?>
+                </div>
+            </form>
+        </div>
+
+        <br>
+
+        <!-- Merchandise and cart containers -->
+        <div id="container">
+            <div class="box" id="merch_response">
+                <!-- Merchandise will be dynamically loaded here -->
+            </div>
+            <div class="box" id="cart_response">
+                <!-- Cart updates will be displayed here -->
+            </div>
+        </div>
+    </main>
+
     <script>
+        const user_id = 3; // Replace this with dynamic user ID from session management
+
+        // Function to update the merchandise list based on selected filters
         function updateAWFCStatus() {
-            var selectedValue1 = document.getElementById("status").value;
-            var selectedValue2 = document.getElementById("merch_name").value;
-            var xmlhttp = new XMLHttpRequest();
-            xmlhttp.open("POST", "awfcshow.php", true);
-            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xmlhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("merch_response").innerHTML = this.responseText;
-                }
-            };
-            xmlhttp.send("value1=" + selectedValue1 + "&value2=" + selectedValue2);
+            const formData = new FormData(document.getElementById('awfc_form'));
+            formData.append("merch_name", document.getElementById('merch_name').value);
+
+            fetch('awfcshow.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    document.getElementById('merch_response').innerHTML = data;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
         }
+
+        // Function to add an item to the cart
+        function addToCart(id) {
+            const formData = new FormData();
+            formData.append('item', id);
+            formData.append('user_id', user_id);
+
+            fetch('cart.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('cart_response').innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                });
+                
+        }
+
+        // Function to remove an item from the cart
+        function removeFromCart(id) {
+            const formData = new FormData();
+            formData.append('remove_item', id);
+            formData.append('user_id', user_id);
+
+            fetch('cart.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    document.getElementById('cart_response').innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                });
+                
+        }
+        function checkoutItems(shopping_cart, userid, total_price) {
+            const formData = new FormData();
+            formData.append('shopping_cart', shopping_cart);
+
+            formData.append('user_id', user_id);
+            formData.append('total_price', total_price);
+
+            fetch('checkout.php', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                })
+                .then(data => {
+                    document.getElementById('cart_response').innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error)
+                });
+            }
+            function loginUser(){
+                event.preventDefault();
+                const formData = new FormData( document.getElementById('login'));
+
+                fetch('cart.php', {
+                method: 'POST',
+                body: formData,
+            })
+            }
     </script>
 </body>
 

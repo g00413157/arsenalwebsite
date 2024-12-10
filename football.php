@@ -1,79 +1,79 @@
-<style>
-    th {
-        background-color: #EF0107;
-        color: #ffffff;
-        font-family: "Arsenal SC", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-
-    }
-
-    tr {
-        border-bottom: 1px solid #ddd;
-        font-family: "Arsenal SC", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        text-align: center;
-
-    }
-  table,tr{
-    width: 100%;
-  }
-    table,
-    th,
-    td {
-        border: 1px solid ;
-        width: 12%;
-        padding: 8px;
-       
-    }
-
-    .profile-image {
-        width: 50px;
-        height: auto;
-        border-radius: 8px;
-    }
-
-    .flag-image {
-        width: 30px;
-        height: auto;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styless.css" rel="stylesheet">
+    <title>Player Information</title>
+</head>
+<body>
 
 <?php
-// Get the position from the query string
-if (isset($_GET['q'])) {
-    $position = $_GET['q'];
+// Get the position and nationality from the query string
+$position = isset($_GET['position']) ? $_GET['position'] : '';
+$nationality = isset($_GET['nationality']) ? $_GET['nationality'] : '';
 
-    // Database connection details
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $db_name = "arsenalwebsitedb";
+// Database connection details
+$servername = "localhost";
+$username = "root";
+$password = "";
+$db_name = "arsenalwebsitedb";
 
-    // Create connection
-    $conn = mysqli_connect($servername, $username, $password, $db_name);
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $db_name);
 
-    // Check connection
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
 
-    // Prepare the query to fetch the player details based on position
-    $sql = "SELECT * FROM players WHERE position = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $position); // "s" means string
+// Prepare the query to fetch the player details based on position and nationality
+$sql = "SELECT * FROM players WHERE 1=1";
+$params = [];
+$types = "";
 
-    // Execute the query
-    $stmt->execute();
-    $result = $stmt->get_result();
+if (!empty($position)) {
+    $sql .= " AND position = ?";
+    $params[] = $position;
+    $types .= "s";
+}
+if (!empty($nationality)) {
+    $sql .= " AND nationality = ?";
+    $params[] = $nationality;
+    $types .= "s";
+}
+if (!empty($position) && $position !== "All") {
+    $sql .= " AND position = ?";
+    $params[] = $position;
+    $types .= "s";
+}
+if (!empty($nationality) && $nationality !== "All") {
+    $sql .= " AND nationality = ?";
+    $params[] = $nationality;
+    $types .= "s";
+}
 
-    // Check if players are found
-    if ($result->num_rows > 0) {
-        // Start the table
-        echo "<table >
+$stmt = $conn->prepare($sql);
+
+if ($stmt === false) {
+    die("Error preparing statement: " . $conn->error);
+}
+
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+// Execute the query
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if players are found
+if ($result->num_rows > 0) {
+    // Start the table and center it using the table-container div
+    echo "<div class='table-container'>
+            <table border='1' style='border-collapse: collapse; width: 100%; text-align: center;'>
                 <thead>
-                    <tr>
+                    <tr style='background-color: #f2f2f2;'>
                         <th>Profile Image</th>
                         <th>Name</th>
                         <th>Position</th>
@@ -82,49 +82,33 @@ if (isset($_GET['q'])) {
                         <th>Flag</th>
                         <th>Date of Birth</th>
                         <th>Description</th>
-                    
                     </tr>
                 </thead>
                 <tbody>";
 
-        // Output the player's details in a table row
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-
-            // Display profile image in the first column
-            echo "<td><img src='" . htmlspecialchars($row["profile_image"]) . "' alt='" . htmlspecialchars($row["name"]) . "' class='profile-image' /></td>";
-
-            // Display player name
-            echo "<td>" . htmlspecialchars($row["name"]) . "</td>";
-
-            // Display position
-            echo "<td>" . htmlspecialchars($row["position"]) . "</td>";
-
-            echo "<td>" . htmlspecialchars($row["number"]) . "</td>";
-
-            // Display nationality
-            echo "<td>" . htmlspecialchars($row["nationality"]) . "</td>";
-
-            echo "<td><img src='" . htmlspecialchars($row["flag_image"]) . "' alt='" . htmlspecialchars($row["nationality"]) . " flag' class='flag-image' /></td>";
-            // Display date of birth
-            echo "<td>" . htmlspecialchars($row["date_of_birth"]) . "</td>";
-
-            // Display description
-            echo "<td >" . htmlspecialchars($row["description"]) . "</td>";
-
-            // Display flag image in the last column
-
-
-            echo "</tr>";
-        }
-
-        // End the table
-        echo "</tbody></table>";
-    } else {
-        echo "No players found in this position.";
+    // Output the player's details in a table row
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td><img src='" . htmlspecialchars($row["profile_image"]) . "' alt='" . htmlspecialchars($row["name"]) . "' style='width: 50px; height: auto; border-radius: 8px;' /></td>";
+        echo "<td>" . htmlspecialchars($row["name"]) . "</td>";
+        echo "<td>" . htmlspecialchars($row["position"]) . "</td>";
+        echo "<td>" . htmlspecialchars($row["number"]) . "</td>";
+        echo "<td>" . htmlspecialchars($row["nationality"]) . "</td>";
+        echo "<td><img src='" . htmlspecialchars($row["flag_image"]) . "' alt='" . htmlspecialchars($row["nationality"]) . " flag' style='width: 30px; height: auto;' /></td>";
+        echo "<td>" . htmlspecialchars($row["date_of_birth"]) . "</td>";
+        echo "<td>" . htmlspecialchars($row["description"]) . "</td>";
+        echo "</tr>";
     }
 
-    // Close the connection
-    $conn->close();
+    // End the table
+    echo "</tbody></table></div>";
+} else {
+    echo "<div style='text-align: center; margin-top: 20px;'>No players found for the selected filters.</div>";
 }
+
+// Close the connection
+$conn->close();
 ?>
+
+</body>
+</html>

@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&display=swap"
         rel="stylesheet">
     <script>
-        function showPlayer(str) {
+        function showMerchandise(str) {
             if (str === "") {
                 document.getElementById("footballertable").innerHTML = "";
                 return;
@@ -19,10 +19,10 @@
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function () {
                     if (this.readyState === 4 && this.status === 200) {
-                        document.getElementById("footballertable").innerHTML = this.responseText;
+                        document.getElementById("merchandisetable").innerHTML = this.responseText;
                     }
                 };
-                xmlhttp.open("GET", "football.php?q=" + str, true);
+                xmlhttp.open("GET", "awfcinventory.php?q=" + str, true);
                 xmlhttp.send();
             }
         }
@@ -46,7 +46,7 @@
         }
 
         // Fetch distinct positions and sort them alphabetically
-        $sql = "SELECT DISTINCT position FROM players ORDER BY position ASC";
+        $sql = "SELECT DISTINCT merch_name FROM merchandise ORDER BY merch_name ASC";
         $result = $conn->query($sql);
 
         if (!$result) {
@@ -55,13 +55,13 @@
         ?>
 
         <div>
-            <label for="players">Choose a position:</label>
-            <select name="positions" id="players" onchange="showPlayer(this.value)">
+            <label for="merchandise">Choose an item:</label>
+            <select name="name" id="merchandise" onchange="showMerchandise(this.value)">
                 <option value="" style="display:none">Select a position</option>
                 <?php
                 // Populate the dropdown with positions
                 while ($row = $result->fetch_assoc()) {
-                    echo "<option value=\"" . htmlspecialchars($row["position"]) . "\">" . htmlspecialchars($row["position"]) . "</option>";
+                    echo "<option value=\"" . htmlspecialchars($row["merch_name"]) . "\">" . htmlspecialchars($row["merch_name"]) . "</option>";
                 }
                 ?>
             </select>
@@ -69,7 +69,7 @@
     </form>
 
     <br>
-    <div id="footballertable"><b>Player info will be listed here...</b></div>
+    <div id="merchandisetable"><b> Choose your Merchandise</b></div>
 
     <?php
     // Close the connection
