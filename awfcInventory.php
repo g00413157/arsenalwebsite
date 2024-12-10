@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +14,7 @@
 </head>
 
 <body>
-    <header class="header">
+<header class="header">
         <!-- Left navigation links -->
         <nav class="nav-links">
             <a id="plyrs" href="showplayers.php">Players</a>
@@ -20,18 +24,18 @@
 
         <!-- Centered logo -->
         <div class="logo">
-            <a href="mainpage.php">
+            <a href="index.php">
                 <img src="cannon.png" alt="Logo">
             </a>
         </div>
 
-        <!-- Right navigation links -->
+        <!-- Right navigation link -->
         <nav class="nav-links">
-            <a id="up" href="createUser.php">Sign Up</a>
-            <a id="in" href="userForm.php">Log In</a>
-        </nav>
+        
+        <a href="userForm.php">Sign Up</a>
+        <a href="loginpage.php">Sign In</a>
+    </nav>
     </header>
-
     <main>
         <center>
             <h1>Merchandise Shop</h1>
@@ -80,7 +84,7 @@
                         while ($row = $result2->fetch_assoc()) {
                             echo "<label>";
                             echo "<input type=\"checkbox\" name=\"status[]\" value=\"" . htmlspecialchars($row["status"]) . "\" onclick=\"updateAWFCStatus()\">" . htmlspecialchars($row["status"]);
-                            echo "</label><br>";
+                            echo "</label>";
                         }
                     }
 
@@ -104,7 +108,8 @@
     </main>
 
     <script>
-        const user_id = 3; // Replace this with dynamic user ID from session management
+       
+        const user_id = <?php echo isset($_SESSION['username']) ? json_encode($_SESSION['username']) : 'null'; ?>;
 
         // Function to update the merchandise list based on selected filters
         function updateAWFCStatus() {
@@ -171,10 +176,19 @@
                 });
                 
         }
+
+        // Function to trigger checkout
         function checkoutItems(shopping_cart, userid, total_price) {
+            if (!user_id) {
+                // If user is not logged in, prompt them to log in
+                alert('Please log in to use the cart!');
+                // Redirect to login page
+                window.location.href = 'loginpage.php';
+                return;
+            }
+
             const formData = new FormData();
             formData.append('shopping_cart', shopping_cart);
-
             formData.append('user_id', user_id);
             formData.append('total_price', total_price);
 
@@ -193,16 +207,7 @@
                 .catch(error => {
                     console.error('Error:', error)
                 });
-            }
-            function loginUser(){
-                event.preventDefault();
-                const formData = new FormData( document.getElementById('login'));
-
-                fetch('cart.php', {
-                method: 'POST',
-                body: formData,
-            })
-            }
+        }
     </script>
 </body>
 

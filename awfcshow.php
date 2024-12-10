@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 $merch_name = isset($_POST['merch_name']) ? htmlspecialchars($_POST['merch_name']) : '';
 $status_out = isset($_POST['status']) ? $_POST['status'] : [];
 

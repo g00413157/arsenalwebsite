@@ -26,23 +26,31 @@
 </head>
 
 <body>
-    <header class="header">
+<header class="header">
+        <!-- Left navigation links -->
         <nav class="nav-links">
-            <a href="showplayers.php">Players</a>
-            <a href="showmatches.php">Matches</a>
-            <a href="awfcInventory.php">Merchandise</a>
+            <a id="plyrs" href="showplayers.php">Players</a>
+            <a id="matchs" href="showmatches.php">Matches</a>
+            <a id="merch" href="awfcInventory.php">Merchandise</a>
         </nav>
+
+        <!-- Centered logo -->
         <div class="logo">
-            <a href="mainpage.php"><img src="cannon.png" alt="Logo"></a>
+            <a href="index.php">
+                <img src="cannon.png" alt="Logo">
+            </a>
         </div>
+
+        <!-- Right navigation link -->
         <nav class="nav-links">
-            <a href="createUser.php">Sign Up</a>
-            <a href="userForm.php">Sign In</a>
-        </nav>
+        
+        <a href="userForm.php">Sign Up</a>
+        <a href="loginpage.php">Sign In</a>
+    </nav>
     </header>
     <br>
-    <h2>Match Information: </h2>
-    <br>
+    <h1>Match Information: </h1>
+    
     <form>
         <?php
         $servername = "localhost";

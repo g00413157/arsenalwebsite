@@ -25,8 +25,7 @@ if ($conn->query($sql) === TRUE) {
 $conn->select_db($database);
 
 // Create the `cart` table
-$sql = "
-CREATE TABLE IF NOT EXISTS cart (
+$sql = "CREATE TABLE IF NOT EXISTS cart (
     id INT AUTO_INCREMENT PRIMARY KEY,       
     user_id INT NOT NULL,                    
     item_id INT NOT NULL,                    

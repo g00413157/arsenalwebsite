@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,17 +21,16 @@
 
         <!-- Centered logo -->
         <div class="logo">
-            <a href="mainpage.php">
+            <a href="index.php">
                 <img src="cannon.png" alt="Logo">
             </a>
         </div>
 
         <!-- Right navigation link -->
         <nav class="nav-links">
-            <a id="up" href="createUser.php">Sign Up</a>
-            <a id="in" href="userForm.php">Log In</a>
-
-        </nav>
+        <a href="userForm.php">Sign Up</a>
+        <a href="loginpage.php">Sign In</a>
+    </nav>
     </header>
     <h1>Arsenal Women</h1>
     

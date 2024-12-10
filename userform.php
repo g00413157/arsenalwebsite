@@ -10,34 +10,36 @@
 </head>
 <body>
 <header class="header">
-    <!-- Left navigation links -->
-    <nav class="nav-links">
-        <a href="showplayers.php">Players</a>
-        <a href="showmatches.php">Matches</a>
-        <a href="showmerchandise.php">Merchandise</a>
-    </nav>
+        <!-- Left navigation links -->
+        <nav class="nav-links">
+            <a id="plyrs" href="showplayers.php">Players</a>
+            <a id="matchs" href="showmatches.php">Matches</a>
+            <a id="merch" href="awfcInventory.php">Merchandise</a>
+        </nav>
 
-    <!-- Centered logo -->
-    <div class="logo">
-        <a href="mainpage.php">
-            <img src="cannon.png" alt="Logo">
-        </a>
-    </div>
+        <!-- Centered logo -->
+        <div class="logo">
+            <a href="mainpage.php">
+                <img src="cannon.png" alt="Logo">
+            </a>
+        </div>
 
-    <!-- Right navigation link -->
-    <nav class="nav-links">
-        <a href="createUser.php">Sign Up</a>
-        <a href="userForm.php">Sign In</a>
+        <!-- Right navigation link -->
+        <nav class="nav-links">
+        <a href="userForm.php">Sign Up</a>
+        <a href="loginpage.php">Sign In</a>
     </nav>
-</header>
+    </header>
+<br>
+<h1>Create A user</h1>
 <br>
 <form id="awfc_userForm">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br>
+    <input type="text" id="username" name="username" required><br><br>
     <label for="email">Email:</label>
-    <input type="text" id="email" name="email" required><br>
+    <input type="text" id="email" name="email" required><br><br>
     <label for="password">Password:</label>
-    <input type="text" id="password" name="password" required><br>
+    <input type="text" id="password" name="password" required><br><br>
 
     <div id="buttons">
         <label>&nbsp;</label>

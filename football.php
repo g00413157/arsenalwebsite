@@ -89,7 +89,7 @@ if ($result->num_rows > 0) {
     // Output the player's details in a table row
     while ($row = $result->fetch_assoc()) {
         echo "<tr>";
-        echo "<td><img src='" . htmlspecialchars($row["profile_image"]) . "' alt='" . htmlspecialchars($row["name"]) . "' style='width: 50px; height: auto; border-radius: 8px;' /></td>";
+        echo "<td><img src='" . htmlspecialchars($row["profile_image"]) . "' alt='" . htmlspecialchars($row["name"]) . "' style='width:100px; height: auto; border-radius: 8px;' /></td>";
         echo "<td>" . htmlspecialchars($row["name"]) . "</td>";
         echo "<td>" . htmlspecialchars($row["position"]) . "</td>";
         echo "<td>" . htmlspecialchars($row["number"]) . "</td>";
