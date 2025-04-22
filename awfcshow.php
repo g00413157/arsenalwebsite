@@ -79,18 +79,25 @@ if ($result->num_rows > 0) {
             <th>Description</th>
             <th>Price</th>
             <th>Status</th>
-            <th> </th>
+            <th>Action</th>
           </tr>";
+
     while ($row = $result->fetch_assoc()) {
         echo "<tr>
-              <td><img src='" . htmlspecialchars($row["image_url"]) . "' alt='" . htmlspecialchars($row["merch_name"]) . "'></td>
-              <td>" . htmlspecialchars($row["description"]) . "</td>
-              <td>€" . htmlspecialchars($row["price"]) . "</td>
-              <td>" . htmlspecialchars($row["status"]) . "</td>
-              <td>
-                  <button class='cart-btn' onclick=\"addToCart(" . htmlspecialchars($row['item_id']) . ")\">Add to Cart</button>
-              </td>
-            </tr>";
+                <td><img src='{$row['image_url']}' alt='Merchandise Image'></td>
+                <td>{$row['description']}</td>
+                <td>€{$row['price']}</td>
+                <td>{$row['status']}</td>
+                <td>
+                    <form action='cart.php' method='POST'>
+                        <input type='hidden' name='item' value='{$row['item_id']}'>
+                        <input type='hidden' name='price' value='{$row['price']}'>
+                        <input type='hidden' name='merch_name' value='{$row['merch_name']}'>
+                        <input type='hidden' name='status' value='{$row['status']}'>
+                        <button type='submit' class='cart-btn'>Add to Cart</button>
+                    </form>
+                </td>
+              </tr>";
     }
     echo "</table>";
 } else {
@@ -99,4 +106,3 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-

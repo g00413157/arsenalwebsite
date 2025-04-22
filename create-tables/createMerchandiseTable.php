@@ -31,7 +31,7 @@ $sql = "CREATE TABLE merchandise (
     image_url VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL
     
-);"; // Removed the trailing comma here
+)"; // Removed the trailing comma here
 
 if ($conn->query($sql) === TRUE) {
     echo "Table Merchandise created successfully";

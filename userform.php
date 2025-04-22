@@ -26,6 +26,7 @@
 
         <!-- Right navigation link -->
         <nav class="nav-links">
+        <a href="cartcountshow.php">Cart</a>
         <a href="userForm.php">Sign Up</a>
         <a href="loginpage.php">Sign In</a>
     </nav>

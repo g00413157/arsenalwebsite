@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+// Check if cart_items session exists and has data
+$cart_count = 0;
+if (isset($_SESSION['cart_items'])) {
+    foreach ($_SESSION['cart_items'] as $item_id => $item_info) {
+        $cart_count += $item_info['quantity'];  // Sum up the quantities
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +23,7 @@
             const season = document.getElementById("season").value;
             const opponent = document.getElementById("opponents").value;
             const competition = document.getElementById("competition").value; // Fixed to retrieve value
+            const team = document.getElementById("team").value; // Fixed to retrieve value
             const query = `season=${encodeURIComponent(season)}&opponent=${encodeURIComponent(opponent)}&competition=${encodeURIComponent(competition)}`;
             const xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function () {
@@ -26,28 +38,10 @@
 </head>
 
 <body>
-<header class="header">
-        <!-- Left navigation links -->
-        <nav class="nav-links">
-            <a id="plyrs" href="showplayers.php">Players</a>
-            <a id="matchs" href="showmatches.php">Matches</a>
-            <a id="merch" href="awfcInventory.php">Merchandise</a>
-        </nav>
+<?php include 'header.php'; ?>
 
-        <!-- Centered logo -->
-        <div class="logo">
-            <a href="index.php">
-                <img src="cannon.png" alt="Logo">
-            </a>
-        </div>
-
-        <!-- Right navigation link -->
-        <nav class="nav-links">
-        
-        <a href="userForm.php">Sign Up</a>
-        <a href="loginpage.php">Sign In</a>
-    </nav>
-    </header>
+    <div id="backdrop" class="modal-backdrop" style="display:none;"></div>
+    <div id="modal_front" class="modal" style="display:none;"></div>
     <br>
     <h1>Match Information: </h1>
     
@@ -71,10 +65,14 @@
         $sql_opponent = "SELECT DISTINCT opponent FROM matches ORDER BY opponent ASC";
         $result_opponents = $conn->query($sql_opponent);
 
+        $sql_team = "SELECT DISTINCT arsenal FROM matches ORDER BY arsenal ASC";
+        $result_team= $conn->query($sql_team);
+
         $sql_competition = "SELECT DISTINCT competition FROM matches ORDER BY competition ASC";
         $result_competition = $conn->query($sql_competition);
+      
 
-        if (!$result_season || !$result_opponents || !$result_competition) {
+        if (!$result_season ||!$result_team || !$result_opponents || !$result_competition) {
             die("Query failed: " . $conn->error);
         }
         ?>
@@ -87,6 +85,16 @@
                 <?php
                 while ($row = $result_season->fetch_assoc()) {
                     echo "<option value=\"" . htmlspecialchars($row["season"]) . "\">" . htmlspecialchars($row["season"]) . "</option>";
+                }
+                ?>
+            </select>
+            <br>
+            <label for="team"><b>Choose an Arsenal Team:</b></label>
+            <select name="team" id="team" onchange="showMatches()">
+                <option value="">All Arsenal Teams</option>
+                <?php
+                while ($row = $result_team->fetch_assoc()) {
+                    echo "<option value=\"" . htmlspecialchars($row["arsenal"]) . "\">" . htmlspecialchars($row["arsenal"]) . "</option>";
                 }
                 ?>
             </select>
@@ -112,6 +120,7 @@
                 }
                 ?>
             </select>
+            
         </div>
     </form>
 
@@ -122,5 +131,5 @@
     $conn->close();
     ?>
 </body>
-
+<script src="js/logincreate.js"></script>
 </html>

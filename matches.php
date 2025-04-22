@@ -3,6 +3,7 @@
 $season = isset($_GET['season']) ? $_GET['season'] : '';
 $opponent = isset($_GET['opponent']) ? $_GET['opponent'] : '';
 $competition = isset($_GET['competition']) ? $_GET['competition'] : '';
+$team = isset($_GET['arsenal']) ? $_GET['arsenal'] : '';
 
 // Database connection details
 $servername = "localhost";
@@ -37,6 +38,11 @@ if (!empty($competition)) {
     $params[] = $competition;
     $types .= "s";
 }
+if (!empty($team)) {
+    $sql .= " AND arsenal = ?";
+    $params[] = $team;
+    $types .= "s";
+}
 
 // Prepare the query
 $stmt = $conn->prepare($sql);
@@ -55,51 +61,30 @@ $result = $stmt->get_result();
 
 // Check results
 if ($result->num_rows > 0) {
-    echo "<div class='table-container'>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Season</th>
-                        <th>Arsenal Team</th>
-                        <th></th>
-                        <th>Opponent</th>
-                        <th>Stadium</th>
-                        <th>Home/Away</th>
-                        <th>Score</th>
-                        <th>Competition</th>
-                    </tr>
-                </thead>
-                <tbody>";
-    
-    // Loop through the rows to populate the table
+    echo "<div class='match-card-container'>";
+
     while ($row = $result->fetch_assoc()) {
-        echo "<tr>
-                <td>" . htmlspecialchars($row["date"]) . "</td>
-                <td>" . htmlspecialchars($row["season"]) . "</td>
-                <td>
-                    <img src='" . htmlspecialchars($row["arsenalb_url"]) . "' 
-                         alt='" . htmlspecialchars($row["arsenal"]) . "' 
-                         style='width: 50px; height: auto;'>
-                </td>
-                <td>VS</td>
-                <td>
-                    <img src='" . htmlspecialchars($row["badge_url"]) . "' 
-                         alt='" . htmlspecialchars($row["opponent"]) . "' 
-                         style='width: 50px; height: auto;'>
-                </td>
-                <td>" . htmlspecialchars($row["stadium"]) . "</td>
-                <td>" . htmlspecialchars($row["home_away"]) . "</td>
-                <td><b>" . htmlspecialchars($row["score"]) . "</b></td>
-                <td>
-                    <img src='" . htmlspecialchars($row["comp_url"]) . "' 
-                         alt='" . htmlspecialchars($row["competition"]) . "' 
-                         style='width: 50px; height: auto;'>
-                </td>
-              </tr>";
+        echo "
+        <div class='match-card'>
+            <h2>" . htmlspecialchars($row["arsenal"]) . " vs " . htmlspecialchars($row["opponent"]) . "</h2>
+            <div class='logos'>
+                <img src='" . htmlspecialchars($row["arsenalb_url"]) . "' alt='" . htmlspecialchars($row["arsenal"]) ." width= 35px height 40px". "'>
+                <span>VS</span>
+                <img src='" . htmlspecialchars($row["badge_url"]) . "' alt='" . htmlspecialchars($row["opponent"]) ." width= 35px height 40px". "'>
+            </div>
+            <p><strong>Date:</strong> " . htmlspecialchars($row["date"]) . "</p>
+            <p><strong>Season:</strong> " . htmlspecialchars($row["season"]) . "</p>
+            <p><strong>Stadium:</strong> " . htmlspecialchars($row["stadium"]) . "</p>
+            <p><strong>Home/Away:</strong> " . htmlspecialchars($row["home_away"]) . "</p>
+            <p><strong>Score:</strong> <b>" . htmlspecialchars($row["score"]) . "</b></p>
+            <div class='competition'>
+                <img src='" . htmlspecialchars($row["comp_url"]) . "' alt='" . htmlspecialchars($row["competition"]) . "'>
+                <p>" . htmlspecialchars($row["competition"]) . "</p>
+            </div>
+        </div>";
     }
 
-    echo "</tbody></table></div>";
+    echo "</div>";
 } else {
     // No results message
     echo "<div style='text-align: center; margin-top: 20px;'>No matches found for the selected filters.</div>";

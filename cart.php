@@ -1,132 +1,144 @@
-
-    <?php
+<?php
 session_start();
-$item = isset($_POST["item"]) ? $_POST["item"] : "";
-$user_id = isset($_SESSION['username']) ? intval($_SESSION['username']) : 0; // Default to 0 if not logged in
-$remove_item = isset($_POST["remove_item"]) ? $_POST["remove_item"] : "";
 
-$conn = new mysqli("localhost", "root", "", "arsenalwebsitedb");
-if ($conn->connect_error) {
-    die("Connection Failed: " . $conn->connect_error);
+// Check if cart_items session exists and has data
+$cart_count = 0;
+if (isset($_SESSION['cart_items'])) {
+    foreach ($_SESSION['cart_items'] as $item_id => $item_info) {
+        $cart_count += $item_info['quantity'];  // Sum up the quantities
+    }
 }
-echo "<style>
-    #table-container {
-        margin: auto;
-        border-collapse: collapse;
-        width: 80%;
-        text-align: center;
-    }
-    #table-container th, #table-container td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-    #table-container th {
-        background-image: linear-gradient(to right, #a0f1eb, #ca94ff);
-        color: #000;
-        padding: 10px;
-    }
-    #table-container td img {
-        width: 100px;
-        height: auto;
-    }
-    #table-container td {
-        padding: 10px;
-    }
-    .cart-btn,#checkout-btn {
-        padding: 8px 15px;
-        margin-top: 5px;
-        background-color: #ca94ff;
-        border: none;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .cart-btn:hover,#checkout-btn:hover{
-        background-color: #9f76c4;
-    }
-    p {
-        text-align: center;
-        font-size: 18px;
-    }
-</style>";
+// Include database connection
+include 'db.php';  // Make sure this is the correct path to your db connection file
 
-$shopping_cart_temp_table = "shopping_cart_user_$user_id";
-$sql_table_statement = "SHOW TABLES LIKE '$shopping_cart_temp_table'";
-$result = $conn->query($sql_table_statement);
-
-if (mysqli_num_rows($result) == 0) { // Corrected condition
-    $sql_create_table = "CREATE TABLE $shopping_cart_temp_table (
-        id INT(11) AUTO_INCREMENT PRIMARY KEY,
-        item_id INT NOT NULL,
-        quantity INT NOT NULL
-    )";
-    $conn->query($sql_create_table);
+// Check if the cart session exists
+if (!isset($_SESSION['cart_items'])) {
+    $_SESSION['cart_items'] = [];
 }
 
-if ($item) {
-    $sql_find_item_in_cart = "SELECT item_id, quantity FROM $shopping_cart_temp_table WHERE item_id = $item";
-    $result_find = $conn->query($sql_find_item_in_cart);
+// Cart handling logic (add, remove, and update cart items)
+if (isset($_POST['add_to_cart'])) {
+    $item_id = $_POST['add_to_cart'];
+    $quantity = isset($_POST['quantity']) ? $_POST['quantity'] : 1; // Default quantity is 1
 
-    if (mysqli_num_rows($result_find) == 0) {
-        $stmt = $conn->prepare("INSERT INTO $shopping_cart_temp_table (item_id, quantity) VALUES (?, ?)");
-        $quantity_now = 1;
-        $stmt->bind_param("ii", $item, $quantity_now);
-        $stmt->execute();
-        $stmt->close();
+    // If the cart already exists, update it, otherwise create a new one
+    if (isset($_SESSION['cart_items'][$item_id])) {
+        // Increase the quantity if the item is already in the cart
+        $_SESSION['cart_items'][$item_id]['quantity'] += $quantity;
     } else {
-        $row = mysqli_fetch_array($result_find);
-        $value = $row["quantity"] + 1;
-        $stmt = $conn->prepare("UPDATE $shopping_cart_temp_table SET quantity = ? WHERE item_id = ?");
-        $stmt->bind_param("ii", $value, $item);
-        $stmt->execute();
-        $stmt->close();
+        // Add the item with the specified quantity
+        $_SESSION['cart_items'][$item_id] = ['quantity' => $quantity];
     }
 }
 
-if ($remove_item) {
-    $stmt = $conn->prepare("DELETE FROM $shopping_cart_temp_table WHERE item_id = ?");
-    $stmt->bind_param("i", $remove_item);
+// Handle removing items from the cart
+if (isset($_POST['remove_from_cart'])) {
+    $item_id = $_POST['remove_from_cart'];
+    unset($_SESSION['cart_items'][$item_id]);
+}
+
+// Handle updating the quantity of items
+if (isset($_POST['update_quantity'])) {
+    $item_id = $_POST['item_id'];
+    $quantity = $_POST['quantity'];
+
+    if ($quantity <= 0) {
+        unset($_SESSION['cart_items'][$item_id]); // Remove item if quantity is 0 or less
+    } else {
+        $_SESSION['cart_items'][$item_id]['quantity'] = $quantity;
+    }
+}
+
+// Calculate the total price
+$total_price = 0;
+foreach ($_SESSION['cart_items'] as $item_id => $item) {
+    // Fetch the item details from the database
+    $query = "SELECT * FROM merchandise WHERE item_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $item_id);
     $stmt->execute();
-    $stmt->close();
-}
+    $result = $stmt->get_result();
+    $item_data = $result->fetch_assoc();
 
-$sql_items = "SELECT item_id FROM $shopping_cart_temp_table ORDER BY item_id";
-$items_result = $conn->query($sql_items);
-
-if ($items_result->num_rows > 0) {
-    $sql_statement = "SELECT m.merch_name, m.price, m.image_url, m.description, t.quantity, t.item_id
-        FROM $shopping_cart_temp_table t
-        JOIN Merchandise m ON t.item_id = m.item_id";
-    $result = $conn->query($sql_statement);
-    $conn->close();
-
-    echo "<br><h1><b>SHOPPING CART</b></h1><br>";
-    echo "<table id='table-container' style='width: 90%'>";
-    echo "<tr>
-        <th>Image</th>
-        <th>Description</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th></th>
-    </tr>";
-    $total_price = 0;
-
-    while ($row = mysqli_fetch_array($result)) {
-        echo "<tr>";
-        echo "<td><img src='" . htmlspecialchars($row["image_url"]) . "' alt='" . htmlspecialchars($row["merch_name"]) . "'></td>";
-        echo "<td>" . htmlspecialchars($row["description"]) . "</td>";
-        echo "<td>" . $row['quantity'] . "</td>";
-        echo "<td>€" . htmlspecialchars($row["price"]) . "</td>";
-        echo "<td><button class='cart-btn' onclick='removeFromCart(" . $row['item_id'] . ")'>Remove From Cart</button></td>";
-        echo "</tr>";
-        $total_price += $row['price'] * $row['quantity'];
-    }
-    echo "<td></td><td></td><td><b>Total Price:</b></td><td>€$total_price</td><td></td>";
-    echo "<tr><td></td><td></td><td></td><td></td>";
-    echo "<td><button id='checkout-btn' onclick='checkoutItems(\"$shopping_cart_temp_table\", \"$user_id\", $total_price)'>Checkout</button></td></tr>";
-    echo "</table>";
-} else {
-    echo "Your shopping cart is empty.";
+    // Calculate the total price for the item
+    $total_price += $item_data['price'] * $item['quantity']; // Access the 'quantity' correctly
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart</title>
+    <link rel="icon" type="image/png" href="crest.png">
+    <link rel="stylesheet" href="styless.css"> <!-- Make sure this CSS file includes the card styles -->
+</head>
+
+<body>
+    <main>
+        <?php include 'headerAfter.php'; ?>
+
+        <div class="cart-wrapper">
+            <div class="cart-card">
+                <h2>Your Cart</h2>
+
+                <?php if (count($_SESSION['cart_items']) > 0): ?>
+                    <ul class="cart-list">
+                        <?php foreach ($_SESSION['cart_items'] as $item_id => $item): ?>
+                            <?php
+                            $query = "SELECT * FROM merchandise WHERE item_id = ?";
+                            $stmt = $conn->prepare($query);
+                            $stmt->bind_param("i", $item_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $item_data = $result->fetch_assoc();
+                            ?>
+                            <li class="cart-item">
+                                <img src="<?php echo htmlspecialchars($item_data['image_url']); ?>" class="cart-item-image"
+                                    alt="<?php echo htmlspecialchars($item_data['merch_name']); ?>">
+
+                                <div class="cart-item-info">
+                                    <p class="item-name"><?php echo htmlspecialchars($item_data['merch_name']); ?></p>
+                                    <p class="item-price">€<?php echo number_format($item_data['price'], 2); ?></p>
+
+                                    <form action="cart.php" method="POST" class="cart-form">
+                                        <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
+                                        <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1"
+                                            class="cart-input">
+                                        <button type="submit" name="update_quantity" class="cart-btn small">Update</button>
+                                    </form>
+
+                                    <form action="cart.php" method="POST">
+                                        <input type="hidden" name="remove_from_cart" value="<?php echo $item_id; ?>">
+                                        <button type="submit" class="cart-btn small secondary">Remove</button>
+                                    </form>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <div class="cart-total">
+                        <p>Total: <strong>€<?php echo number_format($total_price, 2); ?></strong></p>
+                    </div>
+
+                    <div class="cart-actions">
+                        <a href="awfcInventory.php" class="cart-btn secondary">Continue Shopping</a>
+                        <a href="checkout.php" class="cart-btn">Checkout</a>
+                    </div>
+
+                <?php else: ?>
+                    <p class="empty-cart-msg">Your cart is empty.</p>
+                    <div class="cart-actions">
+                        <a href="awfcInventory.php" class="cart-btn secondary">Continue Shopping</a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+
+</html>
