@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';  // Your database connection
+include 'db.php'; 
 $cart_count = 0;
 if (isset($_SESSION['cart_items'])) {
     foreach ($_SESSION['cart_items'] as $item) {
@@ -9,7 +9,7 @@ if (isset($_SESSION['cart_items'])) {
 }
 // Check if the cart is not empty
 if (!isset($_SESSION['cart_items']) || empty($_SESSION['cart_items'])) {
-    header("Location: awfcInventory.php"); // Redirect to the inventory page if the cart is empty
+    header("Location: awfcInventory.php"); 
     exit();
 }
 
@@ -22,7 +22,7 @@ $cart_details = [];
 
 // Fetch details for each cart item
 foreach ($cart_items as $item_id => $item_info) {
-    $quantity = (int) $item_info['quantity']; // Ensure quantity is an integer
+    $quantity = (int) $item_info['quantity']; 
 
     // Query to fetch item details from the database
     $stmt = $conn->prepare("SELECT * FROM merchandise WHERE item_id = ?");
@@ -32,9 +32,9 @@ foreach ($cart_items as $item_id => $item_info) {
     $item = $result->fetch_assoc();
 
     if ($item) {
-        $item_price = (float) $item['price']; // Ensure price is a float
-        $item_total_price = $item_price * $quantity; // Calculate total price for this item
-        $total_price += $item_total_price; // Add to total
+        $item_price = (float) $item['price'];
+        $item_total_price = $item_price * $quantity; 
+        $total_price += $item_total_price;
 
         // Store item details
         $cart_details[] = [
@@ -42,7 +42,7 @@ foreach ($cart_items as $item_id => $item_info) {
             'price' => $item_price,
             'quantity' => $quantity,
             'total_price' => $item_total_price,
-            'image_url' => $item['image_url'] // Assuming you want to display the image as well
+            'image_url' => $item['image_url'] 
         ];
     }
 }
@@ -57,11 +57,11 @@ foreach ($cart_items as $item_id => $item_info) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - AWFC Merchandise</title>
     <link rel="icon" type="image/png" href="crest.png">
-    <link rel="stylesheet" href="styless.css"> <!-- External stylesheet -->
+    <link rel="stylesheet" href="styless.css"> 
 </head>
 
 <body>
-    <?php include 'headerAfter.php'; ?> <!-- Include the header after login -->
+    <?php include 'header.php'; ?> 
 
     <div class="cart-container">
         <br>
