@@ -78,7 +78,7 @@ foreach ($_SESSION['cart_items'] as $item_id => $item) {
 
 <body>
     <main>
-        <?php include 'headerAfter.php'; ?>
+        <?php include 'header.php'; ?>
 
         <div class="cart-wrapper">
             <div class="cart-card">
