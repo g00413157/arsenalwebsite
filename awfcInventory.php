@@ -82,7 +82,7 @@ $result = $stmt->get_result();
 <body>
 
     <?php include 'header.php'; ?>
-
+    <br>
     <h1>AWFC Merchandise Inventory</h1>
 
     <?php if (isset($_GET['added']) && $_GET['added'] == 'true'): ?>
