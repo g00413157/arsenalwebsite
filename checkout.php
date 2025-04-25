@@ -7,24 +7,24 @@ if (isset($_SESSION['cart_items'])) {
         $cart_count += $item['quantity'];
     }
 }
-// Check if cart_items session exists and is not empty
+
 if (!isset($_SESSION['cart_items']) || empty($_SESSION['cart_items'])) {
-    header("Location: awfcInventory.php"); // Redirect to the inventory page if the cart is empty
+    header("Location: awfcInventory.php"); 
     exit();
 }
 
-// Fetch cart items from the session
+
 $cart_items = $_SESSION['cart_items'];
 
-// Initialize total price
+
 $total_price = 0;
 
-// Fetch details for each cart item
+
 $cart_details = [];
 foreach ($cart_items as $item_id => $item_info) {
     $quantity = $item_info['quantity'];
 
-    // Query to fetch item details from the database
+   
     $stmt = $conn->prepare("SELECT * FROM merchandise WHERE item_id = ?");
     $stmt->bind_param("i", $item_id);
     $stmt->execute();
@@ -64,7 +64,7 @@ foreach ($cart_items as $item_id => $item_info) {
     <h1>Checkout</h1>
 
     <div class="checkout-wrapper">
-        <div class="cart-items">
+        <div class="cart-items">a
             <table class="checkout-table">
                 <thead>
                     <tr>
