@@ -64,7 +64,7 @@ foreach ($cart_items as $item_id => $item_info) {
     <h1>Checkout</h1>
 
     <div class="checkout-wrapper">
-        <div class="cart-items">a
+        <div class="cart-items">
             <table class="checkout-table">
                 <thead>
                     <tr>
