@@ -92,7 +92,7 @@ foreach ($cart_items as $item_id => $item_info) {
             </table>
 
             <p><strong>Total Price: €<?php echo number_format($total_price, 2); ?></strong></p>
-       =
+       
         <form method="POST" action="payment.php" class="checkout-form">
             <h3>Enter Your Information</h3>
             <label for="name">Name:</label>
@@ -103,13 +103,6 @@ foreach ($cart_items as $item_id => $item_info) {
 
             <label for="address">Shipping Address:</label>
             <textarea id="address" name="address" required></textarea><br>
-
-            <label for="payment_method">Payment Method:</label>
-            <select id="payment_method" name="payment_method" required>
-                <option value="credit_card">Credit Card</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="cash_on_delivery">Cash on Delivery</option>
-            </select><br><br>
 
             <button type="submit" name="submit_payment">Proceed to Payment</button>
         </form>

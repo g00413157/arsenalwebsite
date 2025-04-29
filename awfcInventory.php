@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php'; // ✅ Include DB early for $conn
+include 'db.php'; 
 
 // Calculate cart count
 $cart_count = 0;
