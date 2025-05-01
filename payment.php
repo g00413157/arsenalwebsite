@@ -3,21 +3,16 @@ session_start();
 include 'db.php'; 
 
 $cart_count = 0;
-if (isset($_SESSION['cart_items'])) {
-    foreach ($_SESSION['cart_items'] as $item) {
-        $cart_count += $item['quantity'];
-    }
-}
-
-if (!isset($_SESSION['cart_items']) || empty($_SESSION['cart_items'])) {
-    header("Location: awfcInventory.php"); 
-    exit();
-}
-
-$cart_items = $_SESSION['cart_items'];
+$cart_items = $_SESSION['cart_items'] ?? [];
 $total_price = 0;
 $cart_details = [];
 
+// Count items
+foreach ($cart_items as $item) {
+    $cart_count += $item['quantity'];
+}
+
+// Fetch item details
 foreach ($cart_items as $item_id => $item_info) {
     $quantity = (int) $item_info['quantity'];
 
@@ -58,56 +53,61 @@ foreach ($cart_items as $item_id => $item_info) {
 <div class="cart-container">
     <br>
     <h1>Confirm Your Order</h1>
+
     <div class="checkout-wrapper">
         <div class="cart-items">
-            <table class="checkout-table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Item Name</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($cart_details as $item): ?>
+            <?php if (!empty($cart_details)): ?>
+                <table class="checkout-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" width="50">
-                            </td>
-                            <td><?php echo htmlspecialchars($item['name']); ?></td>
-                            <td>€<?php echo number_format($item['price'], 2); ?></td>
-                            <td><?php echo $item['quantity']; ?></td>
-                            <td>€<?php echo number_format($item['total_price'], 2); ?></td>
+                            <th>Image</th>
+                            <th>Item Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <p class="total-price">Total Price: €<?php echo number_format($total_price, 2); ?></p>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($cart_details as $item): ?>
+                            <tr>
+                                <td><img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="Item Image" width="50"></td>
+                                <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                <td>€<?php echo number_format($item['price'], 2); ?></td>
+                                <td><?php echo $item['quantity']; ?></td>
+                                <td>€<?php echo number_format($item['total_price'], 2); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <p class="total-price">Total Price: €<?php echo number_format($total_price, 2); ?></p>
+            <?php else: ?>
+                <p>Your cart is currently empty.</p>
+            <?php endif; ?>
         </div>
     </div>
 
     <!-- Payment Form -->
-    <form method="POST" action="finalize_payment.php" class="payment-form">
-        <h3>Enter Your Payment Information</h3>
+    <?php if (!empty($cart_details)): ?>
+        <form method="POST" action="finalize_payment.php" class="payment-form">
+            <h3>Enter Your Payment Information</h3>
 
-        <label for="card_number">Card Number:</label>
-        <input type="text" id="card_number" name="card_number" pattern="\d{16}" title="Card number must be 16 digits" required>
+            <label for="card_number">Card Number:</label>
+            <input type="text" id="card_number" name="card_number" pattern="\d{16}" title="Card number must be 16 digits" required>
 
-        <label for="expiry_date">Expiry Date (MM/YY):</label>
-        <input type="text" id="expiry_date" name="expiry_date" pattern="(0[1-9]|1[0-2])\/\d{2}" title="Expiry must be in MM/YY format" required>
+            <label for="expiry_date">Expiry Date (MM/YY):</label>
+            <input type="text" id="expiry_date" name="expiry_date" pattern="(0[1-9]|1[0-2])\/\d{2}" title="Expiry must be in MM/YY format" required>
 
-        <label for="cvv">CVV:</label>
-        <input type="text" id="cvv" name="cvv" pattern="\d{3}" title="CVV must be 3 digits" required>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" pattern="\d{3}" title="CVV must be 3 digits" required>
 
-        <button type="submit" name="submit_payment">Submit Payment</button>
-    </form>
+            <button type="submit" name="submit_payment">Submit Payment</button>
+        </form>
+    <?php endif; ?>
 </div>
 
-<!-- Optional JavaScript Validation -->
+<!-- Client-side validation -->
 <script>
-document.querySelector('.payment-form').addEventListener('submit', function(e) {
+document.querySelector('.payment-form')?.addEventListener('submit', function(e) {
     const card = document.getElementById('card_number').value.trim();
     const expiry = document.getElementById('expiry_date').value.trim();
     const cvv = document.getElementById('cvv').value.trim();

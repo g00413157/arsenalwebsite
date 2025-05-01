@@ -91,9 +91,16 @@ if (isset($_SESSION['cart_items'])) {
         <label for="opponents"><b>Choose an opponent:</b></label>
         <select name="opponents" id="opponents" onchange="showMatches()">
             <option value="">All Opponents</option>
-            <?php while ($row = $result_opponents->fetch_assoc()) {
-                echo "<option value=\"" . htmlspecialchars($row["opponent"]) . "\">" . htmlspecialchars($row["opponent"]) . "</option>";
-            } ?>
+            <?php 
+            $opponentsArray = []; // Create an array to store unique opponents
+            while ($row = $result_opponents->fetch_assoc()) {
+                $opponentName = htmlspecialchars($row["opponent"]);
+                if (!in_array($opponentName, $opponentsArray)) { // Check if opponent is already in the array
+                    $opponentsArray[] = $opponentName; // Add opponent to array
+                    echo "<option value=\"$opponentName\">$opponentName</option>";
+                }
+            }
+            ?>
         </select>
         <br>
 
